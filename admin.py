@@ -12,9 +12,9 @@ class Admin:
             address (string, optional): Address Defaults to ''
         """
 
-        self.__username = username
-        self.__password = password
-        self.__address = address
+        self.username = username
+        self.password = password
+        self.address = address
 
     def view(self, a_list):
         """
@@ -42,8 +42,12 @@ class Admin:
         password = input("Enter the password: ")
 
         # check if the username and password match the registered ones
-        # ToDo1
-        pass
+        if username == self.username and password == self.password:
+            print("Login successful.")
+            return True
+
+        else:
+            return False
 
     def find_index(self, index, doctors):
         # check that the doctor id exists

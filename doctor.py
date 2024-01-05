@@ -16,35 +16,28 @@ class Doctor:
         self.__appointments = []
 
     def full_name(self):
-        # ToDo1
-        pass
+        return self.__first_name + " " + self.__surname
 
-    def get_first_name(self):
-        # ToDo2
-        pass
+    def get___first_name(self):
+        return self.__first_name
 
-    def set_first_name(self, new_first_name):
-        # ToDo3
-        pass
+    def set___first_name(self, new___first_name):
+        self.__first_name = new___first_name
 
-    def get_surname(self):
-        # ToDo4
-        pass
+    def get___surname(self):
+        return self.__surname
 
-    def set_surname(self, new_surname):
-        # ToDo5
-        pass
+    def set___surname(self, new___surname):
+        self.__surname = new___surname
 
     def get_speciality(self):
-        # ToDo6
-        pass
+        return self.__speciality
 
     def set_speciality(self, new_speciality):
-        # ToDo7
-        pass
+        self.__speciality = new_speciality
 
     def add_patient(self, patient):
-        self.patients.append(patient)
+        self.__patients.append(patient)
 
     def __str__(self):
         return f"{self.full_name():^30}|{self.__speciality:^15}"
