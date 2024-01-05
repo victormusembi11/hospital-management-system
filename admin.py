@@ -65,8 +65,11 @@ class Admin:
             first name, surname and ...
                             ... the speciality of the doctor in that order.
         """
-        # ToDo2
-        pass
+        first_name = input("Enter the first name: ")
+        surname = input("Enter the surname: ")
+        speciality = input("Enter the speciality: ")
+
+        return first_name, surname, speciality
 
     def doctor_management(self, doctors):
         """
@@ -85,7 +88,7 @@ class Admin:
         print(" 4 - Delete")
 
         # ToDo3
-        pass
+        op = input("Option: ")  # make the user input lowercase
 
         # register
         if op == "1":
@@ -94,7 +97,6 @@ class Admin:
             # get the doctor details
             print("Enter the doctor's details:")
             # ToDo4
-            pass
 
             # check if the name is already registered
             name_exists = False
@@ -115,8 +117,7 @@ class Admin:
         # View
         elif op == "2":
             print("-----List of Doctors-----")
-            # ToDo7
-            pass
+            self.view(doctors)
 
         # Update
         elif op == "3":

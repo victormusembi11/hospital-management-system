@@ -46,8 +46,7 @@ def main():
 
         if op == "1":
             # 1- Register/view/update/delete doctor
-            # ToDo1
-            pass
+            admin.doctor_management(doctors)
 
         elif op == "2":
             # 2- View or discharge patients
@@ -83,8 +82,7 @@ def main():
 
         elif op == "6":
             # 6 - Quit
-            # ToDo5
-            pass
+            running = False
 
         else:
             # the user did not enter an option that exists in the menu

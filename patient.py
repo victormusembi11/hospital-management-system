@@ -10,19 +10,20 @@ class Patient:
             mobile (string): the mobile number
             address (string): address
         """
-
-        # ToDo1
-        pass
         self.__doctor = "None"
+        self.__first_name = first_name
+        self.__surname = surname
+        self.__age = age
+        self.__mobile = mobile
+        self.__postcode = postcode
 
     def full_name(self):
         """full name is first_name and surname"""
-        # ToDo2
-        pass
+        return self.__first_name + " " + self.__surname
 
     def get_doctor(self):
-        # ToDo3
-        pass
+        """returns the doctor"""
+        return self.__doctor
 
     def link(self, doctor):
         """Args: doctor(string): the doctor full name"""
