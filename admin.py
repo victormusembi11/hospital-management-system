@@ -175,8 +175,7 @@ class Admin:
         print(
             "ID |          Full Name           |      Doctor`s Full Name      | Age |    Mobile     | Postcode "
         )
-        # ToDo10
-        pass
+        self.view(patients)
 
     def assign_doctor_to_patient(self, patients, doctors):
         """
@@ -243,12 +242,18 @@ class Admin:
             patients (list<Patients>): the list of all the active patients
             discharge_patients (list<Patients>): the list of all the non-active patients
         """
+        self.view_patient(patients)
+
         print("-----Discharge Patient-----")
 
         patient_index = input("Please enter the patient ID: ")
 
-        # ToDo12
-        pass
+        discharge_patients.append(patients.pop(int(patient_index) - 1))
+        print("The patient has been discharged.")
+
+        patients.pop(int(patient_index) - 1)
+
+        return patients, discharge_patients
 
     def view_discharge(self, discharged_patients):
         """
@@ -261,8 +266,7 @@ class Admin:
         print(
             "ID |          Full Name           |      Doctor`s Full Name      | Age |    Mobile     | Postcode "
         )
-        # ToDo13
-        pass
+        self.view(discharged_patients)
 
     def update_details(self):
         """

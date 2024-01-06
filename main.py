@@ -57,8 +57,9 @@ def main():
                 op = input("Do you want to discharge a patient(Y/N):").lower()
 
                 if op == "yes" or op == "y":
-                    # ToDo3
-                    pass
+                    patients, discharged_patients = admin.discharge(
+                        patients, discharged_patients
+                    )
 
                 elif op == "no" or op == "n":
                     break
@@ -69,8 +70,7 @@ def main():
 
         elif op == "3":
             # 3 - view discharged patients
-            # ToDo4
-            pass
+            admin.view_discharge(discharged_patients)
 
         elif op == "4":
             # 4- Assign doctor to a patient
