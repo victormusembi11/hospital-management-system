@@ -17,9 +17,16 @@ def main():
         Doctor("Jone", "Carlos", "Cardiology"),
     ]
     patients = [
-        Patient("Sara", "Smith", 20, "07012345678", "B1 234"),
-        Patient("Mike", "Jones", 37, "07555551234", "L2 2AB"),
-        Patient("Daivd", "Smith", 15, "07123456789", "C1 ABC"),
+        Patient(
+            "Sara",
+            "Smith",
+            20,
+            "07012345678",
+            "B1 234",
+            ["high blood pressure", "heart failure"],
+        ),
+        Patient("Mike", "Jones", 37, "07555551234", "L2 2AB", ["Coughing"]),
+        Patient("Daivd", "Smith", 15, "07123456789", "C1 ABC", ["Fever"]),
     ]
     discharged_patients = []
 

@@ -213,7 +213,7 @@ class Admin:
 
         print("-----Doctors Select-----")
         print("Select the doctor that fits these symptoms:")
-        patients[patient_index].print_symptoms()  # print the patient symptoms
+        print(patients[patient_index].print_symptoms())  # print the patient symptoms
 
         print("--------------------------------------------------")
         print("ID |          Full Name           |  Speciality   ")
@@ -227,8 +227,7 @@ class Admin:
             # check if the id is in the list of doctors
             if self.find_index(doctor_index, doctors) != False:
                 # link the patients to the doctor and vice versa
-                # ToDo11
-                pass
+                patients[patient_index].link(doctors[doctor_index].full_name())
 
                 print("The patient is now assign to the doctor.")
 
