@@ -12,8 +12,8 @@ class Admin:
             address (string, optional): Address Defaults to ''
         """
 
-        self.username = username
-        self.password = password
+        self.__username = username
+        self.__password = password
         self.address = address
 
     def view(self, a_list):
@@ -280,8 +280,10 @@ class Admin:
         op = int(input("Input: "))
 
         if op == 1:
-            # ToDo14
-            pass
+            username = input("Enter the new username: ")
+            # validate the username
+            if username == input("Enter the new username again: "):
+                self.__username = username
 
         elif op == 2:
             password = input("Enter the new password: ")
@@ -290,9 +292,8 @@ class Admin:
                 self.__password = password
 
         elif op == 3:
-            # ToDo15
-            pass
+            address = input("Enter the new address: ")
+            self.address = address
 
         else:
-            # ToDo16
-            pass
+            print("Invalid operation choosen. Check your spelling!")
