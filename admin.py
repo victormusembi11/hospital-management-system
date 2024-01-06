@@ -158,10 +158,12 @@ class Admin:
             self.view(doctors)
 
             doctor_index = input("Enter the ID of the doctor to be deleted: ")
-            # ToDo9
-            pass
 
-            print("The id entered is incorrect")
+            try:
+                doctors.pop(int(doctor_index) - 1)
+                print("Doctor deleted.")
+            except ValueError:
+                print("The id entered is incorrect")
 
         # if the id is not in the list of patients
         else:
