@@ -42,7 +42,7 @@ class Admin:
         password = input("Enter the password: ")
 
         # check if the username and password match the registered ones
-        if username == self.username and password == self.password:
+        if username == self.__username and password == self.__password:
             print("Login successful.")
             return True
 
@@ -87,8 +87,7 @@ class Admin:
         print(" 3 - Update")
         print(" 4 - Delete")
 
-        # ToDo3
-        op = input("Option: ")  # make the user input lowercase
+        op = input("Option: ").lower()  # make the user input lowercase
 
         # register
         if op == "1":
@@ -96,22 +95,25 @@ class Admin:
 
             # get the doctor details
             print("Enter the doctor's details:")
-            # ToDo4
+
+            first_name = input("Enter the first name: ")
+            surname = input("Enter the surname: ")
+            speciality = input("Enter the speciality: ")
 
             # check if the name is already registered
             name_exists = False
+
             for doctor in doctors:
                 if (
-                    first_name == doctor.get_first_name()
-                    and surname == doctor.get_surname()
+                    first_name == doctor.get___first_name()
+                    and surname == doctor.get___surname()
                 ):
                     print("Name already exists.")
-                    # ToDo5
-                    pass  # save time and end the loop
+                    break
 
-            # ToDo6
-            pass  # add the doctor ...
-            # ... to the list of doctors
+            doctor = Doctor(first_name, surname, speciality)
+            doctors.append(doctor)
+
             print("Doctor registered.")
 
         # View
