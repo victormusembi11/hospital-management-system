@@ -356,8 +356,55 @@ class HospitalManagementSystemUI:
         tk.Button(view_window, text="Back", command=view_window.destroy).pack(pady=5)
 
     def assign_doctor_to_patient(self):
-        # Implement the logic for this option
-        pass
+        assign_window = tk.Toplevel(self.master)
+        assign_window.title("Assign Doctor to Patient")
+
+        tk.Label(assign_window, text="Select a patient:").pack(pady=10)
+        patient_options = [str(patient) for patient in self.patients]
+        patient_var = tk.StringVar(assign_window)
+        patient_var.set(patient_options[0])  # Set the default value
+
+        patient_dropdown = tk.OptionMenu(assign_window, patient_var, *patient_options)
+        patient_dropdown.pack(pady=10)
+
+        tk.Label(assign_window, text="Select a doctor:").pack(pady=10)
+        doctor_options = [str(doctor) for doctor in self.doctors]
+        doctor_var = tk.StringVar(assign_window)
+        doctor_var.set(doctor_options[0])  # Set the default value
+
+        doctor_dropdown = tk.OptionMenu(assign_window, doctor_var, *doctor_options)
+        doctor_dropdown.pack(pady=10)
+
+        assign_button = tk.Button(
+            assign_window,
+            text="Assign Doctor",
+            command=lambda: self.assign_doctor_submit(
+                patient_var.get(), doctor_var.get(), assign_window
+            ),
+        )
+        assign_button.pack(pady=10)
+
+        back_button = tk.Button(
+            assign_window, text="Back", command=assign_window.destroy
+        )
+        back_button.pack(pady=5)
+
+    def assign_doctor_submit(self, selected_patient, selected_doctor, assign_window):
+        if not selected_patient or not selected_doctor:
+            messagebox.showerror("Error", "Please select both patient and doctor.")
+        else:
+            patient = next(
+                (p for p in self.patients if str(p) == selected_patient), None
+            )
+            doctor = next((d for d in self.doctors if str(d) == selected_doctor), None)
+
+            if patient and doctor:
+                messagebox.showinfo("Success", f"Assigned {doctor} to {patient}.")
+            else:
+                messagebox.showerror("Error", "Patient or doctor not found.")
+
+            # Close the assign window
+            assign_window.destroy()
 
     def update_admin_details(self):
         update_admin_window = tk.Toplevel(self.master)
