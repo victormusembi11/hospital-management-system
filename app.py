@@ -3,6 +3,7 @@ from tkinter import simpledialog, messagebox
 
 from doctor import Doctor
 from patient import Patient
+from admin import Admin
 
 
 class HospitalManagementSystemUI:
@@ -10,6 +11,7 @@ class HospitalManagementSystemUI:
         self.doctors = doctors
         self.patients = patients
         self.discharged_patients = discharged_patients
+        self.admin = Admin("admin", "123", "B1 1AB")
         self.master = master
         self.master.title("Hospital Management System")
         self.create_widgets()
@@ -28,7 +30,10 @@ class HospitalManagementSystemUI:
         username = simpledialog.askstring("Login", "Enter your username:")
         password = simpledialog.askstring("Login", "Enter your password:")
 
-        if username == "admin" and password == "123":
+        if (
+            username == self.admin.get_username()
+            and password == self.admin.get_password()
+        ):
             self.show_menu()
         else:
             messagebox.showerror("Login Failed", "Incorrect username or password.")
@@ -355,8 +360,42 @@ class HospitalManagementSystemUI:
         pass
 
     def update_admin_details(self):
-        # Implement the logic for this option
-        pass
+        update_admin_window = tk.Toplevel(self.master)
+        update_admin_window.title("Update Admin Details")
+
+        tk.Label(update_admin_window, text="Enter the new admin details:").pack(pady=10)
+
+        new_username = tk.StringVar()
+        new_password = tk.StringVar()
+
+        tk.Label(update_admin_window, text="New Username:").pack()
+        tk.Entry(update_admin_window, textvariable=new_username).pack()
+
+        tk.Label(update_admin_window, text="New Password:").pack()
+        tk.Entry(update_admin_window, textvariable=new_password, show="*").pack()
+
+        tk.Button(
+            update_admin_window,
+            text="Update",
+            command=lambda: self.update_admin_details_submit(
+                new_username, new_password, update_admin_window
+            ),
+        ).pack(pady=5)
+
+        tk.Button(
+            update_admin_window, text="Back", command=update_admin_window.destroy
+        ).pack(pady=5)
+
+    def update_admin_details_submit(
+        self, new_username, new_password, update_admin_window
+    ):
+        if new_username.get() == "" or new_password.get() == "":
+            messagebox.showerror("Error", "Please fill all the fields.")
+        else:
+            self.admin.__username = new_username.get()
+            self.admin.__password = new_password.get()
+            messagebox.showinfo("Success", "Admin details updated.")
+            update_admin_window.destroy()
 
 
 doctors = [

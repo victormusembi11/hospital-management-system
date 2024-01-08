@@ -300,3 +300,9 @@ class Admin:
 
         else:
             print("Invalid operation choosen. Check your spelling!")
+
+    def get_username(self):
+        return self.__username
+
+    def get_password(self):
+        return self.__password
