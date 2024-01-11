@@ -1,8 +1,8 @@
 import json
 import tkinter as tk
 from tkinter import simpledialog, messagebox
-import calendar
-from collections import defaultdict
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 from doctor import Doctor
 from patient import Patient
@@ -199,13 +199,13 @@ class HospitalManagementSystemUI:
 
         tk.Label(update_window, text="Choose the field to be updated:").pack()
 
-        options = [1, 2, 3]  # Use integers instead of strings
+        options = [1, 2, 3]
 
         for i, option in enumerate(options, start=1):
             tk.Radiobutton(
                 update_window,
                 text=f"{i}. {'First name' if option == 1 else 'Surname' if option == 2 else 'Speciality'}",
-                variable=doctor_id,  # Use doctor_id as the variable
+                variable=doctor_id,
                 value=option,
             ).pack()
 
@@ -270,9 +270,7 @@ class HospitalManagementSystemUI:
         tk.Button(
             delete_window,
             text="Delete",
-            command=lambda: self.delete_doctor_submit(
-                doctor_id, delete_window  # Correct the method name here
-            ),
+            command=lambda: self.delete_doctor_submit(doctor_id, delete_window),
         ).pack(pady=5)
 
         tk.Button(delete_window, text="Back", command=delete_window.destroy).pack(
@@ -379,7 +377,7 @@ class HospitalManagementSystemUI:
         tk.Label(assign_window, text="Select a patient:").pack(pady=10)
         patient_options = [str(patient) for patient in self.patients]
         patient_var = tk.StringVar(assign_window)
-        patient_var.set(patient_options[0])  # Set the default value
+        patient_var.set(patient_options[0])
 
         patient_dropdown = tk.OptionMenu(assign_window, patient_var, *patient_options)
         patient_dropdown.pack(pady=10)
@@ -387,7 +385,7 @@ class HospitalManagementSystemUI:
         tk.Label(assign_window, text="Select a doctor:").pack(pady=10)
         doctor_options = [str(doctor) for doctor in self.doctors]
         doctor_var = tk.StringVar(assign_window)
-        doctor_var.set(doctor_options[0])  # Set the default value
+        doctor_var.set(doctor_options[0])
 
         doctor_dropdown = tk.OptionMenu(assign_window, doctor_var, *doctor_options)
         doctor_dropdown.pack(pady=10)
@@ -479,7 +477,6 @@ class HospitalManagementSystemUI:
     def group_patients_by_family(self):
         grouped_patients = self.admin.group_patients_by_family(self.patients)
 
-        # Display grouped patients in the Tkinter window
         grouped_window = tk.Toplevel(self.master)
         grouped_window.title("Grouped Patients")
 
@@ -498,22 +495,18 @@ class HospitalManagementSystemUI:
         )
 
     def generate_management_report(self):
-        # a) Total number of doctors in the system
         total_doctors = len(self.doctors)
 
-        # b) Total number of patients per doctor
         patients_per_doctor = {
             doctor.full_name(): len(doctor._Doctor__patients) for doctor in self.doctors
         }
 
-        # c) Total number of appointments per month per doctor
         appointments_per_month_per_doctor = {}
         for doctor in self.doctors:
             appointments_per_month_per_doctor[doctor.full_name()] = len(
                 doctor._Doctor__appointments
             )
 
-        # d) Total number of patients based on the illness type
         patients_by_illness = {}
         for patient in self.patients:
             illnesses = patient.get_illnesses()
@@ -523,7 +516,37 @@ class HospitalManagementSystemUI:
                 else:
                     patients_by_illness[illness] += 1
 
-        # Display the management report in the Tkinter window
+        self.render_management_report(
+            total_doctors,
+            patients_per_doctor,
+            appointments_per_month_per_doctor,
+            patients_by_illness,
+        )
+
+    def render_bar_chart(self, title, x_label, y_label, data_dict):
+        labels = list(data_dict.keys())
+        values = list(data_dict.values())
+
+        fig, ax = plt.subplots()
+
+        ax.bar(labels, values)
+        ax.set_xlabel(x_label)
+        ax.set_ylabel(y_label)
+        ax.set_title(title)
+
+        canvas = FigureCanvasTkAgg(fig, master=self.master)
+        canvas_widget = canvas.get_tk_widget()
+        canvas_widget.pack()
+
+        canvas.draw()
+
+    def render_management_report(
+        self,
+        total_doctors,
+        patients_per_doctor,
+        appointments_per_month_per_doctor,
+        patients_by_illness,
+    ):
         report_window = tk.Toplevel(self.master)
         report_window.title("Management Report")
 
@@ -552,6 +575,39 @@ class HospitalManagementSystemUI:
         ).pack()
         for illness, count in patients_by_illness.items():
             tk.Label(report_window, text=f"   {illness}: {count} patients").pack()
+
+        tk.Button(
+            report_window,
+            text="Total Number of Patients per Doctor",
+            command=lambda: self.render_bar_chart(
+                "Total Number of Patients per Doctor",
+                "Doctors",
+                "Number of Patients",
+                patients_per_doctor,
+            ),
+        ).pack(pady=5)
+
+        tk.Button(
+            report_window,
+            text="Total Number of Appointments per Doctor",
+            command=lambda: self.render_bar_chart(
+                "Total Number of Appointments per Doctor",
+                "Doctors",
+                "Number of Appointments",
+                appointments_per_month_per_doctor,
+            ),
+        ).pack(pady=5)
+
+        tk.Button(
+            report_window,
+            text="Total Number of Patients by Illness",
+            command=lambda: self.render_bar_chart(
+                "Total Number of Patients by Illness",
+                "Illnesses",
+                "Number of Patients",
+                patients_by_illness,
+            ),
+        ).pack(pady=5)
 
         tk.Button(report_window, text="Back", command=report_window.destroy).pack(
             pady=5
