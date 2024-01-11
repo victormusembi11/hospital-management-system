@@ -2,6 +2,25 @@
 from admin import Admin
 from doctor import Doctor
 from patient import Patient
+import json
+
+
+def save_patients_to_file(patients, file_path):
+    """Saves patients' data to a file."""
+    with open(file_path, "w") as file:
+        json.dump([patient.to_dict() for patient in patients], file)
+
+
+def load_patients_from_file(file_path):
+    """Loads patients' data from a file."""
+    patients = []
+    try:
+        with open(file_path, "r") as file:
+            data = json.load(file)
+            patients = [Patient.from_dict(patient_data) for patient_data in data]
+    except FileNotFoundError:
+        pass
+    return patients
 
 
 def main():
@@ -16,18 +35,8 @@ def main():
         Doctor("Jone", "Smith", "Pediatrics"),
         Doctor("Jone", "Carlos", "Cardiology"),
     ]
-    patients = [
-        Patient(
-            "Sara",
-            "Smith",
-            20,
-            "07012345678",
-            "B1 234",
-            ["high blood pressure", "heart failure"],
-        ),
-        Patient("Mike", "Jones", 37, "07555551234", "L2 2AB", ["Coughing"]),
-        Patient("Daivd", "Smith", 15, "07123456789", "C1 ABC", ["Fever"]),
-    ]
+    patients = load_patients_from_file("patients.json")
+
     discharged_patients = []
 
     # keep trying to login tell the login details are correct
@@ -89,6 +98,7 @@ def main():
 
         elif op == "6":
             # 6 - Quit
+            save_patients_to_file(patients, "patients.json")
             running = False
 
         else:

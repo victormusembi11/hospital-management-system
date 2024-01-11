@@ -16,6 +16,18 @@ class Admin:
         self.__password = password
         self.address = address
 
+    def group_patients_by_family(self, patients):
+        grouped_patients = {}  # Dictionary to store patients grouped by family
+
+        for patient in patients:
+            family_key = (patient.get_surname(), patient.get_postcode())
+            if family_key not in grouped_patients:
+                grouped_patients[family_key] = [patient]
+            else:
+                grouped_patients[family_key].append(patient)
+
+        return grouped_patients
+
     def view(self, a_list):
         """
         print a list

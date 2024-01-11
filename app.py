@@ -1,5 +1,8 @@
+import json
 import tkinter as tk
 from tkinter import simpledialog, messagebox
+import calendar
+from collections import defaultdict
 
 from doctor import Doctor
 from patient import Patient
@@ -44,9 +47,13 @@ class HospitalManagementSystemUI:
 
         options = [
             "Register/view/update/delete doctor",
+            "view patients",
             "Discharge patients",
             "View discharged patient",
             "Assign doctor to a patient",
+            "Relocate patients",
+            "Group Patients",
+            "Generate Management Report",
             "Update admin details",
             "Quit",
         ]
@@ -61,15 +68,24 @@ class HospitalManagementSystemUI:
     def handle_option(self, option):
         if option == "Register/view/update/delete doctor":
             self.register_view_update_doctor()
+        elif option == "view patients":
+            self.view_patients()
         elif option == "Discharge patients":
             self.discharge_patients()
         elif option == "View discharged patient":
             self.view_discharged_patients()
         elif option == "Assign doctor to a patient":
             self.assign_doctor_to_patient()
+        elif option == "Relocate patients":
+            self.relocate_patients()
+        elif option == "Group Patients":
+            self.group_patients_by_family()
+        elif option == "Generate Management Report":
+            self.generate_management_report()
         elif option == "Update admin details":
             self.update_admin_details()
         elif option == "Quit":
+            save_patients_to_file(self.patients, "patients.json")
             self.master.destroy()
 
     def register_view_update_doctor(self):
@@ -318,11 +334,12 @@ class HospitalManagementSystemUI:
 
         tk.Label(
             view_window,
-            text="ID |          Full Name           |      Doctor`s Full Name      | Age |    Mobile     | Postcode",
+            text="ID | Full Name | Doctor | Age | Mobile | Address | Symptoms",
+            anchor="w",
         ).pack()
 
         for i, patient in enumerate(self.patients, start=1):
-            tk.Label(view_window, text=f"{i:2} | {patient}").pack()
+            tk.Label(view_window, text=f"{i:2} | {patient}", anchor="w").pack()
 
         tk.Button(view_window, text="Back", command=view_window.destroy).pack(pady=5)
 
@@ -399,12 +416,146 @@ class HospitalManagementSystemUI:
             doctor = next((d for d in self.doctors if str(d) == selected_doctor), None)
 
             if patient and doctor:
+                patient.link(selected_doctor)
                 messagebox.showinfo("Success", f"Assigned {doctor} to {patient}.")
             else:
                 messagebox.showerror("Error", "Patient or doctor not found.")
 
-            # Close the assign window
             assign_window.destroy()
+
+    def relocate_patients(self):
+        relocate_window = tk.Toplevel(self.master)
+        relocate_window.title("Relocate Patients")
+
+        tk.Label(relocate_window, text="Select a patient:").pack(pady=10)
+        patient_options = [str(patient) for patient in self.patients]
+        patient_var = tk.StringVar(relocate_window)
+        patient_var.set(patient_options[0])
+
+        patient_dropdown = tk.OptionMenu(relocate_window, patient_var, *patient_options)
+        patient_dropdown.pack(pady=10)
+
+        tk.Label(relocate_window, text="Select a doctor:").pack(pady=10)
+        doctor_options = [str(doctor) for doctor in self.doctors]
+        doctor_var = tk.StringVar(relocate_window)
+        doctor_var.set(doctor_options[0])
+
+        doctor_dropdown = tk.OptionMenu(relocate_window, doctor_var, *doctor_options)
+        doctor_dropdown.pack(pady=10)
+
+        relocate_button = tk.Button(
+            relocate_window,
+            text="Relocate Patient",
+            command=lambda: self.relocate_patient_submit(
+                patient_var.get(), doctor_var.get(), relocate_window
+            ),
+        )
+        relocate_button.pack(pady=10)
+
+        back_button = tk.Button(
+            relocate_window, text="Back", command=relocate_window.destroy
+        )
+        back_button.pack(pady=5)
+
+    def relocate_patient_submit(
+        self, selected_patient, selected_doctor, relocate_window
+    ):
+        if not selected_patient or not selected_doctor:
+            messagebox.showerror("Error", "Please select both patient and doctor.")
+        else:
+            patient = next(
+                (p for p in self.patients if str(p) == selected_patient), None
+            )
+            doctor = next((d for d in self.doctors if str(d) == selected_doctor), None)
+
+            if patient and doctor:
+                patient.link(selected_doctor)
+                messagebox.showinfo("Success", f"Relocated {patient} to {doctor}.")
+            else:
+                messagebox.showerror("Error", "Patient or doctor not found.")
+
+            relocate_window.destroy()
+
+    def group_patients_by_family(self):
+        grouped_patients = self.admin.group_patients_by_family(self.patients)
+
+        # Display grouped patients in the Tkinter window
+        grouped_window = tk.Toplevel(self.master)
+        grouped_window.title("Grouped Patients")
+
+        tk.Label(grouped_window, text="Patients Grouped by Family").pack(pady=10)
+
+        for i, (family_key, family_patients) in enumerate(
+            grouped_patients.items(), start=1
+        ):
+            tk.Label(grouped_window, text=f"Family {i} ({family_key}):").pack()
+
+            for j, patient in enumerate(family_patients, start=1):
+                tk.Label(grouped_window, text=f"  {j}. {patient}").pack()
+
+        tk.Button(grouped_window, text="Back", command=grouped_window.destroy).pack(
+            pady=5
+        )
+
+    def generate_management_report(self):
+        # a) Total number of doctors in the system
+        total_doctors = len(self.doctors)
+
+        # b) Total number of patients per doctor
+        patients_per_doctor = {
+            doctor.full_name(): len(doctor._Doctor__patients) for doctor in self.doctors
+        }
+
+        # c) Total number of appointments per month per doctor
+        appointments_per_month_per_doctor = {}
+        for doctor in self.doctors:
+            appointments_per_month_per_doctor[doctor.full_name()] = len(
+                doctor._Doctor__appointments
+            )
+
+        # d) Total number of patients based on the illness type
+        patients_by_illness = {}
+        for patient in self.patients:
+            illnesses = patient.get_illnesses()
+            for illness in illnesses:
+                if illness not in patients_by_illness:
+                    patients_by_illness[illness] = 1
+                else:
+                    patients_by_illness[illness] += 1
+
+        # Display the management report in the Tkinter window
+        report_window = tk.Toplevel(self.master)
+        report_window.title("Management Report")
+
+        tk.Label(report_window, text="Management Report").pack(pady=10)
+
+        tk.Label(
+            report_window,
+            text=f"a) Total number of doctors in the system: {total_doctors}",
+        ).pack()
+        tk.Label(report_window, text="b) Total number of patients per doctor:").pack()
+        for doctor, patient_count in patients_per_doctor.items():
+            tk.Label(
+                report_window, text=f"   {doctor}: {patient_count} patients"
+            ).pack()
+
+        tk.Label(
+            report_window, text="c) Total number of appointments per month per doctor:"
+        ).pack()
+        for doctor, appointments in appointments_per_month_per_doctor.items():
+            tk.Label(
+                report_window, text=f"   {doctor}: {appointments} appointments"
+            ).pack()
+
+        tk.Label(
+            report_window, text="d) Total number of patients based on the illness type:"
+        ).pack()
+        for illness, count in patients_by_illness.items():
+            tk.Label(report_window, text=f"   {illness}: {count} patients").pack()
+
+        tk.Button(report_window, text="Back", command=report_window.destroy).pack(
+            pady=5
+        )
 
     def update_admin_details(self):
         update_admin_window = tk.Toplevel(self.master)
@@ -417,6 +568,9 @@ class HospitalManagementSystemUI:
 
         tk.Label(update_admin_window, text="New Username:").pack()
         tk.Entry(update_admin_window, textvariable=new_username).pack()
+
+        tk.Label(update_admin_window, text="Address").pack()
+        tk.Entry(update_admin_window, textvariable=self.admin.address).pack()
 
         tk.Label(update_admin_window, text="New Password:").pack()
         tk.Entry(update_admin_window, textvariable=new_password, show="*").pack()
@@ -451,18 +605,26 @@ doctors = [
     Doctor("Jone", "Carlos", "Cardiology"),
 ]
 
-patients = [
-    Patient(
-        "Sara",
-        "Smith",
-        20,
-        "07012345678",
-        "B1 234",
-        ["high blood pressure", "heart failure"],
-    ),
-    Patient("Mike", "Jones", 37, "07555551234", "L2 2AB", ["Coughing"]),
-    Patient("Daivd", "Smith", 15, "07123456789", "C1 ABC", ["Fever"]),
-]
+
+def save_patients_to_file(patients, file_path):
+    """Saves patients' data to a file."""
+    with open(file_path, "w") as file:
+        json.dump([patient.to_dict() for patient in patients], file)
+
+
+def load_patients_from_file(file_path):
+    """Loads patients' data from a file."""
+    patients = []
+    try:
+        with open(file_path, "r") as file:
+            data = json.load(file)
+            patients = [Patient.from_dict(patient_data) for patient_data in data]
+    except FileNotFoundError:
+        pass
+    return patients
+
+
+patients = load_patients_from_file("patients.json")
 
 if __name__ == "__main__":
     root = tk.Tk()

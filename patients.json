@@ -1,0 +1,57 @@
+[
+  {
+    "first_name": "Sara",
+    "surname": "Smith",
+    "age": 20,
+    "mobile": "07012345678",
+    "postcode": "B1 234",
+    "symptoms": [
+      "heart failure"
+    ],
+    "doctor": "          John Smith          "
+  },
+  {
+    "first_name": "Mary",
+    "surname": "Smith",
+    "age": 20,
+    "mobile": "07012345678",
+    "postcode": "B1 234",
+    "symptoms": [
+      "heart failure"
+    ],
+    "doctor": "          John Smith          "
+  },
+  {
+    "first_name": "Mike",
+    "surname": "Jones",
+    "age": 37,
+    "mobile": "07555551234",
+    "postcode": "L2 2AB",
+    "symptoms": [
+      "Coughing"
+    ],
+    "doctor": "None"
+  },
+  {
+    "first_name": "David",
+    "surname": "Smith",
+    "age": 15,
+    "mobile": "07123456789",
+    "postcode": "C1 ABC",
+    "symptoms": [
+      "Fever"
+    ],
+    "doctor": "None"
+  },
+  {
+    "first_name": "Mark",
+    "surname": "Doe",
+    "age": 15,
+    "mobile": "07123456789",
+    "postcode": "C1 ABC",
+    "symptoms": [
+      "Fever"
+    ],
+    "doctor": "None"
+  }
+]
