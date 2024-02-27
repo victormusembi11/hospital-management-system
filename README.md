@@ -8,4 +8,5 @@ This is a hospital management system that allows the admin to manage the hospita
 
 1. Clone the repository
 2. Install the requirements using `pip install -r requirements.txt`
-3. Run the application using `python app.py`
+3. Run the console application using `python main.py`
+4. Run the GUI application using `python app.py`
